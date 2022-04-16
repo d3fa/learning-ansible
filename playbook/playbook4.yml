@@ -1,0 +1,33 @@
+---
+- name: My test playbook for Variable Lesson
+  hosts: all_linux
+  become: yes
+
+  vars:   # Создание переменных
+    message1: Privet
+    message2: World
+    secret: LKHJDASOJHDIJH
+  tasks:
+  - name: Print secret variable
+    debug:                   # Вывод сообщений. Существует два метода: var, msg
+      var: secret            # Вывод любой  переменной без скобочек "{{ foo }}"
+  - debug:
+      msg: "Secret Word: {{ secret }}"
+
+  - debug:
+      msg: "Vladelec etogo servera --> {{ owner }} {{ ansible_user_id }} <--" # Отличается тем, что надо переменные делать в скобках
+
+  # set_fact Обьединение переменных в одну строчку чем отличается от msg я хз
+  - set_fact: full_message="{{ message1 }} {{ message2 }} from {{ owner }} ip {{ ansible_all_ipv4_addresses }}" 
+
+  - debug:
+      var: full_message
+  - debug:
+      var: ansible_distribution
+
+  - shell: uptime  # Модуль Shell для вызова любых комманд
+    register: results   #register - save Output from commard to variable %Name% (results)...
+
+  - debug:
+      var: results  # Вывод текста от соданной переменной Result, может быть много строчек %param%
+  # если добавить точку, [var: result.%param%] то можно выводить конкретную строку из всех параметров (вывод комманды быть большой)

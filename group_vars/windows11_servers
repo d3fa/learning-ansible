@@ -1,0 +1,8 @@
+
+---
+ansible_user       : kos10ko@hotmail.com
+#ansible_password = asdasdasdM            --ask-pass
+ansible_shell_type : cmd
+ansible_port       : 22
+ansible_connection : ssh
+ansible_winrm_server_cert_validation : ignore

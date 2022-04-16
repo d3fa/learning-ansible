@@ -1,0 +1,17 @@
+---
+- name: Install webserver
+  hosts: all_linux
+  become: yes
+
+  tasks:
+  - name: install Apache Webserver
+    apt: 
+      name: apache2
+      state: latest
+    
+  - name: Start and enable boot
+    service: 
+      name: apache2
+      state: started
+      enabled: yes
+##installing app
