@@ -1,0 +1,32 @@
+---
+- name: Loop playbook
+  hosts: Client1
+  become: yes
+
+  tasks:
+  - name: Say Hello to ALL
+    debug: msg = "Hello {{ item }}" #item - Служебное слово, работает с Loop
+    loop:
+      - "Vasya"
+      - "Petya"
+      - "Masha"
+      - "Anna"
+
+  - name: Loop Until example
+    shell: echo -n Z >> /home/andrew/MyLoopFile.txt && cat /home/andrew/MyLoopFile.txt
+    register: output # Сохранение вывода комманды cat в одну группу
+    delay: 2 # in seconds
+    retries: 10 #default 3 retries
+    until: output.stdout.find ("ZZZZ") == false
+
+  - name: Print Final Output
+    debug:
+      var: output.stdout
+
+#  - name Install many packaged
+#    apt:
+#     name: {{ item }}
+#    loop:
+#      - python3
+#      - tree
+       

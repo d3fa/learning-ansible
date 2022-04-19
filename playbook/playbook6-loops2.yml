@@ -1,0 +1,80 @@
+---
+- name: Install Apache and Ping Windows PC  # Training modules: vars, when, block, copy, apt, yum, service, handlers, notify
+  hosts: all_linux
+  become: yes
+
+  vars:
+    source_folder: ../site/
+    destin_folder: /var/www/html
+  
+  tasks:
+###################################################
+  - block: #Deb block
+    - name: 1. Install Apache Web Server fot Debian
+      apt:
+         name: apache2
+         state: latest
+
+    - name: 2. Start and enable boot Apache
+      service:
+         name: apache2
+         state: started
+         enabled: yes
+    when: ansible_os_family == "Debian"
+
+####################################################
+
+  - block: #Red block
+    - name: 1. Install Apache Web Server for Redhat
+      yum:
+         name: httpd
+         state: latest
+
+    - name: 2. Start and enable boot Apache
+      service:
+         name: apache2
+         state: started
+         enabled: yes
+
+    when: ansible_os_family == "RedHat"
+
+#####################################################
+  - name: del for testing
+    shell: rm -rf /var/www/html
+
+  - name: 3. Copy Index.html to server
+    copy:
+      src:   "{{ source_folder }}"
+      dest:  "{{ destin_folder }}"
+      owner: andrew      
+      mode: 0644
+      
+
+#       src:  "{{ source_folder }}/{{ item }}" # ITEM - >> loop env
+#       dest:  "{{ destin_folder }}"
+#       mode: 0644
+#    loop:   # Передает значения в item
+#        - "index.html"
+#        - "Resourse/"
+#        - "./Resourse/2.png"
+#        - "./Resourse/3.png"
+    notify:    #Notify + Handler
+         - Restart Apache Debian
+         - Restart Apache RedHat
+
+
+#####################################################      
+  
+  handlers:
+  - name: Restart Apache Debian
+    service:
+      name: apache2
+      state: restarted
+    when: ansible_os_family == "Debian"
+
+  - name: Restart Apache RedHat
+    service:
+      name: httpd
+      state: restarted
+    when: ansible_os_family == "RedHat"
+

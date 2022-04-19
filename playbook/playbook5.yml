@@ -1,5 +1,5 @@
 ---
-- name: Install Apache and Ping Windows PC  # Training modules when, block, copy, apt, yum, service, handlers
+- name: Install Apache and Ping Windows PC  # Training modules: vars, when, block, copy, apt, yum, service, handlers, notify
   hosts: all
 
   vars:
@@ -24,7 +24,7 @@
        copy:
          src:   "{{ source_file }}"
          dest:  "{{ destin_file }}"
-         mode: 0555
+         mode: 0644
        notify: Restart Apache Debian
       
     become: yes
