@@ -1,11 +1,15 @@
 ---
-- name: Install Apache and Ping Windows PC  # Training modules: vars, when, block, copy, apt, yum, service, handlers, notify
+# Training modules: vars, when, block, copy, apt, yum, service,
+# handlers, notify, template (jinja .j2)
+- name: Install Apache to all linux servers
   hosts: all_linux
   become: yes
 
   vars:
     source_folder: ../site/
     destin_folder: /var/www/html
+    resourse_folder: ../site/Resourse
+    
   
   tasks:
 ###################################################
@@ -39,12 +43,26 @@
     when: ansible_os_family == "RedHat"
 
 #####################################################
+  - name: Create a directory if it does not exist
+    ansible.builtin.file:
+      path: /var/www/html/
+      state: directory
+      mode: '0755'
+
   - name: del for testing
-    shell: rm -rf /var/www/html
+    shell:   rm -rf /var/www/html/*
+    
+  - name: Generate Index.html
+    template: 
+      src: "{{ source_folder }}/index.j2"
+      dest: "{{ destin_folder }}/index.html"
+      owner: andrew
+      mode: 0644
+
 
   - name: 3. Copy Index.html to server
     copy:
-      src:   "{{ source_folder }}"
+      src:   "{{ resourse_folder }}"
       dest:  "{{ destin_folder }}"
       owner: andrew      
       mode: 0644
