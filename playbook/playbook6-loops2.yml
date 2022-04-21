@@ -36,7 +36,7 @@
 
     - name: 2. Start and enable boot Apache
       service:
-         name: apache2
+         name: httpd
          state: started
          enabled: yes
 
