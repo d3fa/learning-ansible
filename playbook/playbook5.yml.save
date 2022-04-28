@@ -1,0 +1,37 @@
+---
+- name: Install apache and upload Web page
+  hosts: all
+s
+
+  vars:
+    source_file: ../site/index.html
+    destin_file: /var/www/html
+  
+  tasks:
+  - name: Check OS family
+    debug:
+      var: ansible_distribution #ansible_os_family   # variable from 'ansible all -m setup'
+
+  - name: Install Apache web Server
+    apt:
+      name: apache2
+      state: latest
+
+  - name: Copy Index.html to server 
+    copy: 
+      src:   "{{ source_file }}"
+      dest:  "{{ destin_file }}"
+      mode: 0555
+    notify: Restart Apache handl
+
+  - name: Start and enable boot
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+
+  handlers:
+  - name: Restart Apache handl
+    service:
+      name: apache2
+      state: restarted
