@@ -1,0 +1,26 @@
+---
+### ignore_errors, failed_when, 
+- name: Ansible lesson 19
+  hosts: all_linux
+# any_errors_fatal : yes  # Любая ошибка - выход
+  become: yes
+
+  tasks:
+  - name: Task N1
+    apt:
+     name: treeee
+     state: latest
+    ignore_errors: yes
+
+  - name: Task N2
+    shell: echo hello world
+    register: results
+    failed_when: "'world' in results.stdout"  # Выдаст Ощибку если в переменной result будет'world'
+ #  failed_when: results.rc == 0   #Выдаст ошибку если RC == 0. Все значения(rc, stdout) берутся из debug ниже
+    ignore_errors: yes
+
+  - debug:
+      var: results
+
+  - name: Task N3
+    shell: echo Privet World
