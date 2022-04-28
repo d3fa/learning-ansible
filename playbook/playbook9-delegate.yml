@@ -1,0 +1,40 @@
+---
+# Delegate, run_once lesson
+- name: "Test Connections to my servers"
+  hosts: all_linux
+  become: yes
+
+  vars:
+    ua_text: "Доброго дня, ми з України"
+    en_text: "Hello from UA"
+
+  tasks:  
+  - name: Test ping
+    ping:  
+    run_once: true
+
+  - name: Untegistred Server from Load Balancer
+    shell: echo This server {{ inventory_hostname }} was deregistred from Load Basancer, node name is {{ ansible_nodename }} >> /home/redeg.log
+    delegate_to: 127.0.0.1
+
+
+  - name: Create file 1
+    copy:
+      dest: "/home/andrew/Рабочий стол/file1.txt"
+      content: |
+        This is file N1
+        On English - {{ en_text }}
+        On Ukraine - {{ ua_text }}
+      mode: 0644
+      owner: andrew
+    delegate_to: Client1
+
+  - name: Create file 2
+    copy:
+      dest: "/home/andrew/Рабочий стол/file2.txt"
+      content: |
+        This is file N_2
+        On English - {{ en_text }}
+        On Ukraine - {{ ua_text }}
+      owner: andrew
+      mode: 0644
