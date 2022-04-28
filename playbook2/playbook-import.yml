@@ -1,0 +1,17 @@
+---
+- name: Playbook for test Import
+  hosts: all_linux
+  become: yes
+
+  vars:
+    mytext: "Hello from adv-it.com"
+  
+  tasks:
+  - name: Ping test
+    ping:
+
+  - include_tasks: create_folders.yml
+  
+  - include_tasks: create_files.yml
+    vars:
+      mytext: "Hello from Ukraine"

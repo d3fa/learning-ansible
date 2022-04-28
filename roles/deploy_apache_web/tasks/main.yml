@@ -1,0 +1,49 @@
+---
+# tasks file for deploy_apache_web
+  - block: #Debian block
+    - name: 1. Install Apache Web Server fot Debian
+      apt:
+         name: apache2
+         state: latest
+
+    - name: 2. Start and enable boot Apache
+      service:
+         name: apache2
+         state: started
+         enabled: yes
+    when: ansible_os_family == "Debian"
+
+####################################################
+
+  - block: #RedHat block
+    - name: 1. Install Apache Web Server for Redhat
+      yum:
+         name: httpd
+         state: latest
+
+    - name: 2. Start and enable boot Apache
+      service:
+         name: httpd
+         state: started
+         enabled: yes
+    when: ansible_os_family == "RedHat"
+
+#####################################################
+      
+  - name: 3. Generate Index.html
+    template: 
+      src: index.j2
+      dest: "{{ destin_folder }}/index.html"
+      owner: andrew
+      mode: 0555
+
+  - name: 4. Copy Resourse to server
+    copy:
+      src: ./Resourse
+      dest:  "{{ destin_folder }}"
+      owner: andrew      
+      mode: 0555
+ 
+    notify:
+        - Restart Apache Debian
+        - Restart Apache RedHat
