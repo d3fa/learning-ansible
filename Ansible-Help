@@ -1,0 +1,41 @@
+ssh-copy-id LOGIN@IP_ADRESS #example ssh-copy-id andrew@192.168.1.87  Раскопировать ССШ ключи на компы
+
+ansible -i hosts.txt all -m ping            # Формат хост файла     Client1 ansible_host=192.168.1.134 ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible all -m ping
+
+Полезные команды:
+ansible-inventory --graph
+ansible-inventory --list
+
+ansible all -m setup     Выдает сводную инфу о ПК group ALL
+ansible all -m shell -a "ls -la /home"    Шелл команды на все сервера (любые линукс комманды)
+ansible all -m command -a "ls -la /home"   Тоже самое, но не дает в коммандах использовать "<", ">", "|", ";" and "&"" более безопасная
+ansible all -m copy -a src="Hello.txt dest='/home/andrew/Рабочий стол'" ( mode=777" -b --ask-become-pass)  Модуль копирования на другие сервера, добаить -b --ask-become-pass в самом конце, запустит как sudo
+ansible all -m file -a "path=/home/andrew/Hello.txt state=absent"   Модуль для работы с файлами - absent - удалить, на пример на всех серверах файл Hello.txt
+ansible all -m get_url -a "url=https://cdn2.hubspot.net/file-rail.png dest='/home/andrew/Рабочий стол/'"
+
+ansible all -m apt -a "name=vim state=latest" -b -K    #install app
+ansible all -m apt -a "name=vim state=absent" -b -K    #remove app
+
+ansible all -m uri -a "url=https://www.itc.ua"         #Проверка коннекта к сайту
+
+
+ansible-vault create secret.txt  // создать секретный файл
+ansible-vault view secret.txt
+ansible-vault edit secret.txt
+ansible-vault rekey secret.txt   // изменить пароль на файл
+ansible-vault encrypt playbook.yml // зашифровать готовый файл
+ansible-vault decrypt playbook.yml // расшифровать файл на постоянку
+
+1) ansible-vault encrypt_string  // зашифровать строку (пароль) и вставить вместо открытого пароля в пл-бк  или варинт два ниже
+2) echo -n "наш строка которую хотим зашифровать" | ansible-vault encrypt_string	
+
+	ansible-playbook playbook.yml --ask-vault-pass   // Запуск шифрованый плейбуков с запросом пароля от плейбука
+	ansible-playbook playbook.yml --vault-password-file pass.txt  // файл с паролем вместо запроса
+
+	
+	
+	
+	
+	
+	
