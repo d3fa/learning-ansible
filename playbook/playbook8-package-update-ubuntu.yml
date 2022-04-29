@@ -2,31 +2,34 @@
 
 ---
 - name: Playbook to Update cache, upgrade packages and reboot os if necessary
-  hosts: Client1
+  hosts: all_linux
   become: yes
   gather_facts: False
-  tasks:
   
+  tasks:
   
   - name: Update all packages to their latest version
     apt:
+      
+ #     upgrade: dist
+      update_cache: yes
+      cache_valid_time: 3600
       name: "*"
       state: latest
-      upgrade: yes
-      update_cache: yes
+      
     
-      - name: Check if a reboot is needed on all servers
-      register: reboot_required_file
-      stat:
-        path: /var/run/reboot-required
-        get_md5: no
+  - name: Check if a reboot is needed on all servers
+    register: reboot_required_file
+    stat:
+       path: /var/run/reboot-required
+       get_md5: no
 
-    - name: Reboot the server if kernel updated
-      reboot:
+  - name: Reboot the server if kernel updated
+    reboot:
         msg: "Reboot initiated by Ansible for kernel updates"
         connect_timeout: 5
         reboot_timeout: 300
-        pre_reboot_delay: 0
-        post_reboot_delay: 30
+        pre_reboot_delay: 5
+        post_reboot_delay: 40
         test_command: uptime
-      when: reboot_required_file.stat.exists
+    when: reboot_required_file.stat.exists

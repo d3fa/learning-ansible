@@ -1,0 +1,32 @@
+# Installing new version Ubuntu
+
+---
+- name: Playbook to Update cache, upgrade packages and reboot os if necessary
+  hosts: Client1
+  become: yes
+  gather_facts: true
+  
+  vars:
+    new_version_OS: 22.04
+  
+  tasks:
+  
+#  - name: Upgrade all packages to the latest version
+#    apt: 
+#      update_cache: yes 
+#      upgrade: full
+#
+#  - name: Ensure update-manager-core is installed.
+#    apt: 
+#      name: update-manager-core 
+#      state: present
+  
+  - name: Update to Ubuntu "{{ new_version_OS }}" LTS
+    command: do-release-upgrade -f DistUpgradeViewNonInteractive
+    when:
+    #    - ansible_distribution == 'Ubuntu'
+        - ansible_distribution_version != new_version_OS
+      
+    
+  - name: Reboot servers
+    reboot:
